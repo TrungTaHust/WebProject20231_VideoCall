@@ -178,6 +178,7 @@
 #stream__box {
   background-color: #3f434a;
   height: 60vh;
+  display: none;
 }
 
 
@@ -201,6 +202,22 @@
   overflow: hidden;
   height: 300px;
   width: 300px;
+}
+
+.video-player{
+  height: 100%;
+  width: 100%;
+}
+
+.video-player video{
+  border-radius: 50%;
+}
+
+@media (max-width: 1400px) {
+  .video__container{
+    height: 200px;
+    width: 200px;
+  }
 }
 
 @media (max-width: 1200px) {
@@ -235,6 +252,11 @@
 @media (max-width: 768px) {
   #stream__container {
     width: 100%;
+  }
+
+  .video__container{
+    height: 100px;
+    width: 100px;
   }
 
   #messages__container {
