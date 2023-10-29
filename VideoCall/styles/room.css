@@ -181,6 +181,16 @@
   display: none;
 }
 
+#stream__box .video__container {
+  border: 2px solid #000;
+  border-radius: 0;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+#stream__box video {
+  border-radius: 0;
+}
 
 #streams__container{
   display: flex;
@@ -202,6 +212,11 @@
   overflow: hidden;
   height: 300px;
   width: 300px;
+
+  background-image: url("/VideoCall/images/logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 75px;
 }
 
 .video-player{
