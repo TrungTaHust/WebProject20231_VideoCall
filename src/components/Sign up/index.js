@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button, Typography, Input } from 'antd';
+import { Row, Col, Button, Typography, Form, Input } from 'antd';
 import firebase, { auth } from '../../firebase/config';
 import { addDocument, generateKeywords } from '../../firebase/services';
 
@@ -10,12 +10,12 @@ const fbProvider = new firebase.auth.FacebookAuthProvider();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 export default function SignUp() {
-  const handleSignUp = async (provider) => {
+  const handleSignUp = async (values, provider) => {
     try {
       if (provider === 'email') {
-        // Thực hiện đăng ký bằng email và mật khẩu ở đây
-        const email = ''; // Lấy giá trị email từ trường nhập email
-        const password = ''; // Lấy giá trị mật khẩu từ trường nhập mật khẩu
+        const { email, password } = values;
+
+        // Thực hiện đăng ký bằng email và mật khẩu
         const { user } = await auth.createUserWithEmailAndPassword(email, password);
 
         // Thêm thông tin người dùng vào cơ sở dữ liệu
@@ -23,7 +23,7 @@ export default function SignUp() {
           displayName: user.displayName,
           email: user.email,
           uid: user.uid,
-          providerId: 'email', // Đặt providerId cho email
+          providerId: 'email',
           keywords: generateKeywords(user.displayName?.toLowerCase()),
         });
       } else {
@@ -48,29 +48,38 @@ export default function SignUp() {
 
   return (
     <div>
-      <Row justify='center' style={{ height: 800 }}>
+      <Row justify='center' style={{ height: '100vh' }}>
         <Col span={8}>
           <Title style={{ textAlign: 'center' }} level={3}>
             Đăng ký tài khoản
           </Title>
-          <Input style={{ width: '100%', marginBottom: 5 }} placeholder="Email" />
-          <Password style={{ width: '100%', marginBottom: 5 }} placeholder="Mật khẩu" />
-          <Button
-            style={{ width: '100%', marginBottom: 5 }}
-            onClick={() => handleSignUp('email')}
+          <Form
+            name="signup"
+            initialValues={{ remember: true }}
+            onFinish={(values) => handleSignUp(values, 'email')}
           >
-            Đăng ký bằng Email
-          </Button>
-          <Button
-            style={{ width: '100%', marginBottom: 5 }}
-            onClick={() => handleSignUp(googleProvider)}
-          >
+            <Form.Item
+              name="email"
+              rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
+            >
+              <Input placeholder="Email" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+            >
+              <Password placeholder="Mật khẩu" />
+            </Form.Item>
+            <Form.Item>
+              <Button className="signup-button" type="primary" htmlType="submit">
+                Đăng ký bằng Email
+              </Button>
+            </Form.Item>
+          </Form>
+          <Button className="signup-button" onClick={() => handleSignUp(null, googleProvider)}>
             Đăng ký bằng Google
           </Button>
-          <Button
-            style={{ width: '100%' }}
-            onClick={() => handleSignUp(fbProvider)}
-          >
+          <Button className="signup-button" onClick={() => handleSignUp(null, fbProvider)}>
             Đăng ký bằng Facebook
           </Button>
         </Col>
