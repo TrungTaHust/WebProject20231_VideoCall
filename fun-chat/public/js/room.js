@@ -1,3 +1,5 @@
+//tôi ko chắc file này cần sửa gì ko
+//mấy cái hàm dưới đây ông đọc tên hàm là cũng hiểu nó dùng để làm j r, nên t ko comment nữa
 let messagesContainer = document.getElementById('messages');
 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 

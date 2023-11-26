@@ -1,4 +1,4 @@
-const APP_ID = "e0a1488513e6494f9e821ed78b4fa797";
+const APP_ID = "e0a1488513e6494f9e821ed78b4fa797"; //cái này là key để dùng dịch vụ của nó thôi
 
 let uid = sessionStorage.getItem("uid");
 if (!uid) {
@@ -6,6 +6,7 @@ if (!uid) {
   sessionStorage.setItem("uid", uid);
 }
 
+//file này cũng ko có gì nhiều cần chú ý lắm
 let token = null;
 let client;
 
@@ -13,17 +14,18 @@ let rtmClient;
 let channel;
 
 const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
+const urlParams = new URLSearchParams(queryString); //chỗ này liên quan đến url tên phòng ấy
 let roomId = urlParams.get("room");
 
 if (!roomId) {
   roomId = "main";
 }
 
-let displayName = sessionStorage.getItem("display_name");
+let displayName = sessionStorage.getItem("display_name"); //khúc này là nếu chưa có tên thì phải quay về lobby để nhập tên
 /*if(!displayName) {
     window.location = 'lobby.html'
 }*/
+//vì mình chuyển sang đăng nhập bằng fb r, nên khúc này tôi đang để comment, ông có thể chỉnh thành gán displayName bằng giá trị tên hiển thị trong database
 
 let localTracks = [];
 let remoteUsers = {};
@@ -31,7 +33,7 @@ let remoteUsers = {};
 let localScreenTracks;
 let sharingScreen = false;
 
-let joinRoomInit = async () => {
+let joinRoomInit = async () => { //hàm khởi tạo để bắt đầu vào phòng chat
   rtmClient = await AgoraRTM.createInstance(APP_ID);
   await rtmClient.login({ uid, token });
 
@@ -44,21 +46,21 @@ let joinRoomInit = async () => {
   channel.on("MemberLeft", handleMemberLeft);
   channel.on("ChannelMessage", handleChannelMessage);
 
-  getMembers();
-  addBotMessageToDom(`Welcome to the room ${displayName}!`);
+  getMembers();//Các khúc phía trên dòng này chắc ko cần sửa j đâu
+  addBotMessageToDom(`Welcome to the room ${displayName}!`); //Thêm thông báo của con bot khi có người mới vào, displayName là tên hiển thị ông lấy từ db nhé, còn ko dùng thì bỏ dòng này đi
 
   client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
   await client.join(APP_ID, roomId, token, uid);
 
-  client.on("user-published", handleUserPublished);
-  client.on("user-left", handleUserLeft);
+  client.on("user-published", handleUserPublished);//gọi các hàm khi có người tham gia
+  client.on("user-left", handleUserLeft);// hoặc rời đi
 };
 
 let joinStream = async () => {
-  document.getElementById("join-btn").style.display = "none";
+  document.getElementById("join-btn").style.display = "none"; //nếu ấn join stream r thì cái nút join stream sẽ ẩn (none)
   document.getElementsByClassName("stream__actions")[0].style.display = "flex";
 
-  localTracks = await AgoraRTC.createMicrophoneAndCameraTracks(
+  localTracks = await AgoraRTC.createMicrophoneAndCameraTracks( //vẫn là hàm của hệ thống
     {},
     {
       encoderConfig: {
@@ -70,23 +72,23 @@ let joinStream = async () => {
 
   let player = `<div class="video__container" id = "user-container-${uid}">
                     <div class = "video-player" id = "user-${uid}"></div> 
-                </div>`;
+                </div>`;//đây là khúc t chưa biết sửa như nào này
 
   document
     .getElementById("streams__container")
-    .insertAdjacentHTML("beforeend", player);
+    .insertAdjacentHTML("beforeend", player); //cái player này sẽ được thêm vào dom, tức là có cái khung video tròn khi call ấy
   document
     .getElementById(`user-container-${uid}`)
-    .addEventListener("click", expandVideoFrame);
+    .addEventListener("click", expandVideoFrame); //đây là khi ấn vào cái khung thì nó ra toàn cái hộp chữ nhật lớn để hiển thị video to hơn, kiểu xem stream ấy
 
-  localTracks[1].play(`user-${uid}`);
-  await client.publish([localTracks[0], localTracks[1]]);
+  localTracks[1].play(`user-${uid}`);// 2 dòng này là điều khiển cam mic
+  await client.publish([localTracks[0], localTracks[1]]); //2 dòng này là điều khiển cam mic
 };
 
 let switchToCamera = async () => {
   let player = `<div class="video__container" id = "user-container-${uid}">       
                     <div class = "video-player" id = "user-${uid}"></div>
-                </div>`;
+                </div>`; //nói chung mấy khúc player này t chưa nghĩ ra cách giải quyết như nào để thêm vào cái dom bằng insert html
   displayFrame.insertAdjacentHTML("beforeend", player);
 
   await localTracks[0].setMuted(true);
@@ -99,7 +101,7 @@ let switchToCamera = async () => {
   await client.publish([localTracks[1]]);
 };
 
-let handleUserPublished = async (user, mediaType) => {
+let handleUserPublished = async (user, mediaType) => { //hàm này là khi có thg mới tham gia call
   remoteUsers[user.uid] = user;
 
   await client.subscribe(user, mediaType);
@@ -108,7 +110,7 @@ let handleUserPublished = async (user, mediaType) => {
   if (player === null) {
     player = `<div class="video__container" id = "user-container-${user.uid}">
                     <div class = "video-player" id = "user-${user.uid}"></div>
-                </div>`;
+                </div>`;//tiếp tục xử lí mấy cái html của thg player này thôi
 
     document
       .getElementById("streams__container")
@@ -118,14 +120,16 @@ let handleUserPublished = async (user, mediaType) => {
       .addEventListener("click", expandVideoFrame);
   }
 
+  //mấy câu if dưới đây là để chỉnh giao diện tương ứng
+
   if (displayFrame.style.display) {
     let videoFrame = document.getElementById(`user-container-${user.uid}`);
     videoFrame.style.height = "100px";
-    videoFrame.style.width = "100px";
+    videoFrame.style.width = "100px"; //chỉnh kích thước khung video tròn
   }
 
   if (mediaType === "video") {
-    user.videoTrack.play(`user-${user.uid}`);
+    user.videoTrack.play(`user-${user.uid}`);//chạy video và bên dưới là chạy audio
   }
 
   if (mediaType === "audio") {
@@ -133,7 +137,7 @@ let handleUserPublished = async (user, mediaType) => {
   }
 };
 
-let handleUserLeft = async (user) => {
+let handleUserLeft = async (user) => { //gọi hàm này khi có thg rời call
   delete remoteUsers[user.uid];
   let item = document.getElementById(`user-container-${user.uid}`);
   if (item) {
@@ -152,7 +156,7 @@ let handleUserLeft = async (user) => {
   }
 };
 
-let toggleCamera = async (e) => {
+let toggleCamera = async (e) => { //hàm bật camera
   let button = e.currentTarget;
 
   if (localTracks[1].muted) {
@@ -164,7 +168,7 @@ let toggleCamera = async (e) => {
   }
 };
 
-let toggleMic = async (e) => {
+let toggleMic = async (e) => { //bật mic
   let button = e.currentTarget;
 
   if (localTracks[0].muted) {
@@ -176,7 +180,7 @@ let toggleMic = async (e) => {
   }
 };
 
-let toggleScreen = async (e) => {
+let toggleScreen = async (e) => { //bật share màn
   let screenButton = e.currentTarget;
   let cameraButton = document.getElementById("camera-btn");
 
@@ -194,7 +198,7 @@ let toggleScreen = async (e) => {
 
     let player = `<div class="video__container" id = "user-container-${uid}">
                         <div class = "video-player" id = "user-${uid}"></div>
-                    </div>`;
+                    </div>`; //tiếp tục xử lí mấy thg player
 
     displayFrame.insertAdjacentHTML("beforeend", player);
     document
@@ -206,6 +210,8 @@ let toggleScreen = async (e) => {
 
     await client.unpublish([localTracks[1]]);
     await client.publish([localScreenTracks]);
+
+    //dưới đây chỉ là chỉnh giao diện khi share màn bật/tắt
 
     let videoFrames = document.getElementsByClassName("video__container");
     for (let i = 0; videoFrames.length > i; i++) {
@@ -224,10 +230,10 @@ let toggleScreen = async (e) => {
   }
 };
 
-let leaveStream = async (e) => {
+let leaveStream = async (e) => { //nếu rời stream, ông vẫn ở trong call. Nhưng khi ấy không thể xem ngta gọi dc. Muốn trở lại thì ấn lại vào cái nút join stream
   e.preventDefault();
 
-  document.getElementById("join-btn").style.display = "block";
+  document.getElementById("join-btn").style.display = "block"; //lúc này thì hiển thị lại cái nút join stream
   document.getElementsByClassName("stream__actions")[0].style.display = "none";
 
   for (let i = 0; localTracks.length > i; i++) {
@@ -257,10 +263,13 @@ let leaveStream = async (e) => {
   });
 };
 
+//khúc dưới này là gọi hàm tương ứng khi có click tương ứng
 document.getElementById("camera-btn").addEventListener("click", toggleCamera);
 document.getElementById("mic-btn").addEventListener("click", toggleMic);
 document.getElementById("screen-btn").addEventListener("click", toggleScreen);
 document.getElementById("join-btn").addEventListener("click", joinStream);
 document.getElementById("leave-btn").addEventListener("click", leaveStream);
 
+
+//hàm auto được gọi khi tham gia call
 joinRoomInit();

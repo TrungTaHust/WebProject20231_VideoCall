@@ -1,4 +1,6 @@
-let handleMemberJoined = async (MemberId) => {
+//ông vẫn sửa giúp t khúc insert mấy cái html mjes
+
+let handleMemberJoined = async (MemberId) => {//xử lí sk khi có thg tham gia call
     console.log('A new member has joined the room: ', MemberId)
     addMemberToDom(MemberId)
 
@@ -9,7 +11,7 @@ let handleMemberJoined = async (MemberId) => {
     addBotMessageToDom(`Welcome to the room ${name}!`)
 }
 
-let addMemberToDom = async (MemberId) => {
+let addMemberToDom = async (MemberId) => {//thêm 1 thg vào danh sách ng onl khi nó tham gia call
     let {name} = await rtmClient.getUserAttributesByKeys(MemberId, ['name'])
 
     let membersWrapper = document.getElementById('member__list')
@@ -21,19 +23,19 @@ let addMemberToDom = async (MemberId) => {
     membersWrapper.insertAdjacentHTML('beforeend', memberItem)
 }
 
-let updateMemberTotal = async (members) => {
+let updateMemberTotal = async (members) => {//tăng tổng số thg đang call hiện tại
     let total = document.getElementById('members__count')
     total.innerText = members.length
 }
 
-let handleMemberLeft = async (MemberId) => {
+let handleMemberLeft = async (MemberId) => {//xử lí khi có thg thoát call
     removeMemberFromDom(MemberId)
 
     let members = await channel.getMembers()
     updateMemberTotal(members)
 }
 
-let removeMemberFromDom = async (MemberId) => {
+let removeMemberFromDom = async (MemberId) => {//xóa thg vừa thoát khỏi call
     let memberWrapper = document.getElementById(`member__${MemberId}__wrapper`)
     let name = memberWrapper.getElementsByClassName('member_name')[0].textContent
     memberWrapper.remove()
@@ -50,7 +52,7 @@ let getMembers = async () => {
     }
 }
 
-let handleChannelMessage = async (messageData, MemberId) => {
+let handleChannelMessage = async (messageData, MemberId) => {//xử lí khi có thg muốn gửi tin, hoặc bot gửi tin
     console.log('A new message was received')
     let data = JSON.parse(messageData.text)
     
@@ -72,7 +74,7 @@ let handleChannelMessage = async (messageData, MemberId) => {
     }
 }
 
-let sendMessage = async (e) => {
+let sendMessage = async (e) => {//gửi tin 
     e.preventDefault()
 
     let message = e.target.message.value
@@ -81,7 +83,7 @@ let sendMessage = async (e) => {
     e.target.reset()
 }
 
-let addMessageToDom = (name, message) => {
+let addMessageToDom = (name, message) => {//thêm tin vào danh sách chat hiện có
     let messagesWrapper = document.getElementById('messages')
 
     let newMessage = `<div class="message__wrapper">
@@ -100,7 +102,7 @@ let addMessageToDom = (name, message) => {
 }
 
 
-let addBotMessageToDom = (botMessage) => {
+let addBotMessageToDom = (botMessage) => {// thêm tin từ bot vào danh sách chat có sẵn
     let messagesWrapper = document.getElementById('messages')
 
     let newMessage = `<div class="message__wrapper">
@@ -118,11 +120,12 @@ let addBotMessageToDom = (botMessage) => {
     }
 }
 
-let leaveChannel = async () => {
+let leaveChannel = async () => {//rời call
     await channel.leave()
     await rtmClient.logout()
 }
 
-window.addEventListener('beforeunload', leaveChannel)
-let messageForm = document.getElementById('message__form')
+window.addEventListener('beforeunload', leaveChannel) //xử lí sự kiện rời call
+
+let messageForm = document.getElementById('message__form')//sự kiện gửi tin
 messageForm.addEventListener('submit', sendMessage)
