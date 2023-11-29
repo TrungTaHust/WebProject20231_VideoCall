@@ -6,23 +6,34 @@ import { auth } from '../../firebase/config';
 import { AuthContext } from '../../Context/AuthProvider';
 import { AppContext } from '../../Context/AppProvider';
 
+
+
 const WrapperStyled = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 12px 16px;
+  font-size: 20px;
   border-bottom: 1px solid rgba(82, 38, 83);
 
   .username {
     color: white;
     margin-left: 5px;
   }
+  button:nth-child(2) {
+    height: 40px; /* Điều chỉnh chiều cao của nút */
+    margin-right: 10px;
+    font-size: 16px; /* Điều chỉnh kích thước chữ trong nút */
+  }
 `;
+
 
 export default function UserInfo() {
   const {
     user: { displayName, photoURL },
   } = React.useContext(AuthContext);
   const { clearState } = React.useContext(AppContext);
+  
+
 
   return (
     <WrapperStyled>

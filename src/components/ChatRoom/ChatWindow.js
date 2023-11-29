@@ -1,5 +1,5 @@
 import { UserAddOutlined } from '@ant-design/icons';
-import { VideoCameraOutlined } from '@ant-design/icons';
+
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
@@ -14,10 +14,11 @@ import { useHistory } from 'react-router-dom';
 const HeaderStyled = styled.div`
   display: flex;
   justify-content: space-between;
-  height: 56px;
+  height: 70px;
   padding: 0 16px;
   align-items: center;
   border-bottom: 1px solid rgb(230, 230, 230);
+  font-size: 25px;
 
   .header {
     &__info {
@@ -32,7 +33,7 @@ const HeaderStyled = styled.div`
     }
 
     &__description {
-      font-size: 12px;
+      font-size: 16px;
     }
   }
 `;
@@ -52,6 +53,7 @@ const ContentStyled = styled.div`
   flex-direction: column;
   padding: 11px;
   justify-content: flex-end;
+  font-size: 17px;
 `;
 
 const FormStyled = styled(Form)`
@@ -61,7 +63,9 @@ const FormStyled = styled(Form)`
   padding: 2px 2px 2px 0;
   border: 1px solid rgb(230, 230, 230);
   border-radius: 2px;
-
+  width: 100%; /* Đổi kích thước chiều rộng của form */
+  height: 80px; /* Đổi kích thước chiều cao của form */
+  font-size: 17px;
   .ant-form-item {
     flex: 1;
     margin-bottom: 0;
@@ -116,9 +120,7 @@ export default function ChatWindow() {
     [selectedRoom.id]
   );
   const history = useHistory();
-  const goToLobby = () => {
-    history.push('/lobby'); // Chuyển hướng đến '/lobby'
-  };
+  
   const messages = useFirestore('messages', condition);
 
   useEffect(() => {
@@ -141,12 +143,7 @@ export default function ChatWindow() {
               </span>
             </div>
             <ButtonGroupStyled>
-              <Button 
-                icon = {<VideoCameraOutlined />}
-                onClick={goToLobby}
-              >
                 
-              </Button>
               <Button
                 icon={<UserAddOutlined />}
                 type='text'
