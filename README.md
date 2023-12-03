@@ -2,10 +2,10 @@
 
 # Getting Started with Create React App
 
-npm install
-npm start
+# npm install
+# npm start
 
-cd emulators
-firebase emulators:start
+# cd emulators
+# firebase emulators:start
 
-run in localhost:3000
+# run in localhost:3000
